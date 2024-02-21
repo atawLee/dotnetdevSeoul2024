@@ -1,0 +1,32 @@
+﻿<h4>@ChildTitle</h4>
+
+<button @onclick="ChangeInnerParameter">Inner Change</button>
+@code {
+    [Parameter]
+    public string ChildTitle { get; set; } = "";
+
+    protected override void OnInitialized()
+    {
+        //초기 1회
+        base.OnInitialized();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        ChildTitle += "Conf 2024";
+    }
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+        await base.SetParametersAsync(parameters);
+
+        ChildTitle += " Seoul";
+    }
+
+    private void ChangeInnerParameter()
+    {
+        ChildTitle = "Dotnet Conf. Seoul 2024";
+    }
+}

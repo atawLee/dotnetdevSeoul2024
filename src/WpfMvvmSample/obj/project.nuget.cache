@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "rtVXiQUpyCk4d31MQyVfu88duxds4khxjlApaaqAmDJ/3SarCp0jHzH7JvdZC1kxV/vEgM1ExCeYyHYMnvmFPw==",
+  "success": true,
+  "projectFilePath": "/Users/leejonghoon/project/BlazorWithMvvm/WpfMvvmSample/WpfMvvmSample.csproj",
+  "expectedPackageFiles": [
+    "/Users/leejonghoon/.nuget/packages/communitytoolkit.mvvm/8.2.2/communitytoolkit.mvvm.8.2.2.nupkg.sha512"
+  ],
+  "logs": []
+}

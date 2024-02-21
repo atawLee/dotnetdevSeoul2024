@@ -1,0 +1,74 @@
+﻿@page "/fetchdata"
+@using BlazorWithMvvm.Data
+@implements IDisposable
+
+@inject WeatherForecastService ForecastService
+
+<PageTitle>Weather forecast</PageTitle>
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+<button @onclick="AddForecast">Add Forecast</button>
+
+@if (forecasts == null)
+{
+    <p><em>Initializing...</em></p> 
+}
+else if (!forecasts.Any())
+{
+    <p><em>Loading data...</em></p> 
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<WeatherForecast>? forecasts = new(100000); // 빈 리스트로 초기화
+    private List<WeatherForecast> backData = new(100000);
+
+    int i = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData(); // 페이지 초기화 시 데이터 로드
+    }
+
+    private async Task LoadData()
+    {
+        backData = await ForecastService.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+        forecasts = backData.Take(10000).ToList();
+    }
+
+    public void AddForecast()
+    {
+        ++i;
+        forecasts = backData.Take(i * 10000).ToList();
+    }
+
+    public void Dispose()
+    {
+        this.forecasts.Clear();
+    }
+}

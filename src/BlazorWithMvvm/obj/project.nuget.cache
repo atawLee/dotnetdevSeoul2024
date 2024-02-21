@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "ehQeXzCWORkX8zyA1kbRAp4zNbhiK+CmGatgWTyApPOQOQ+f++rfBoSp8jIeJpTlUWyvrkfMYsY02xKujESt8g==",
+  "success": true,
+  "projectFilePath": "/Users/leejonghoon/project/BlazorWithMvvm/BlazorWithMvvm/BlazorWithMvvm.csproj",
+  "expectedPackageFiles": [
+    "/Users/leejonghoon/.nuget/packages/microsoft.netcore.app.ref/7.0.15/microsoft.netcore.app.ref.7.0.15.nupkg.sha512",
+    "/Users/leejonghoon/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.15/microsoft.aspnetcore.app.ref.7.0.15.nupkg.sha512",
+    "/Users/leejonghoon/.nuget/packages/microsoft.netcore.app.host.osx-arm64/7.0.15/microsoft.netcore.app.host.osx-arm64.7.0.15.nupkg.sha512"
+  ],
+  "logs": []
+}

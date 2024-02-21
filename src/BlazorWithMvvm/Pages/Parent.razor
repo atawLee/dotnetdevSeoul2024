@@ -1,0 +1,13 @@
+﻿@page "/parent"
+
+
+<Child ChildTitle =@_title ></Child>
+<button @onclick="AddTextSpeakerName">이름 추가</button>
+@code {
+    string _title = "Dotnet";
+
+    public void AddTextSpeakerName()
+    {
+        _title = "(이종훈) Dotnet";
+    }
+}

@@ -1,0 +1,18 @@
+﻿@page "/eventbinding"
+
+<h3>Event Method Binding Example</h3>
+
+<button @onclick="ShowMessage">Click Me!</button>
+@if (message != null)
+{
+    <p>@message</p>
+}
+
+@code {
+    private string message;
+
+    private void ShowMessage()
+    {
+        message = "Button clicked at " + DateTime.Now.ToString("T");
+    }
+}

@@ -1,0 +1,26 @@
+﻿@using System.ComponentModel
+@page "/Shared"
+
+@implements IDisposable
+
+@inject SharedViewModel viewModel
+
+<h3>SharedComponent</h3>
+<h1>@viewModel.Count</h1>
+
+<button @onclick="viewModel.UpCount">Up</button>
+<button @onclick="viewModel.DownCount">Down</button>
+
+@code {
+    protected override void OnInitialized() => viewModel.PropertyChanged += ViewModel_PropertyChanged;
+
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => viewModel.PropertyChanged -= ViewModel_PropertyChanged;
+
+    
+}
+

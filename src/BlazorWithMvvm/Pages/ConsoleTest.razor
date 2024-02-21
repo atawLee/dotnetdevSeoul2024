@@ -1,0 +1,11 @@
+﻿@page "/Console"
+@inject IJSRuntime JSRuntime
+
+<button @onclick="PrintToConsole">Print to Console</button>
+
+@code {
+    private async Task PrintToConsole()
+    {
+        await JSRuntime.InvokeVoidAsync("console.log", "Hello from Blazor Server!");
+    }
+}

@@ -1,0 +1,15 @@
+﻿@page "/MvvmSampleFirst"
+
+@inject DataBindingViewModel viewModel;
+@using BlazorWithMvvm.ViewModels;
+@using System.ComponentModel
+
+<h3>Data Binding Example</h3>
+<input type="text" @bind="viewModel.UserName" />
+<p>Hello, @viewModel.UserName!</p>
+<button @onclick="viewModel.ShowMessage">Click Me!</button>
+
+@if (viewModel.Message != null)
+{
+    <p>@viewModel.Message</p>
+}

@@ -1,0 +1,10 @@
+﻿@page "/databinding"
+
+<h3>Data Binding Example</h3>
+
+<input type="text" @bind="userName" />
+<p>Hello, @userName!</p>
+
+@code {
+    private string userName = "";
+}

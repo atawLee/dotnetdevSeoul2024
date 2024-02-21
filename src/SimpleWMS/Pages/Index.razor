@@ -1,0 +1,176 @@
+﻿@page "/"
+@using SimpleWMS.Data
+@using SimpleWMS.Database.Entities
+@using SimpleWMS.Models.Services
+@inject WareHouseManagementService service
+
+<h3 class="mb-4">입출고 이력 조회</h3>
+<div class="search-box">
+    <div class="row mb-3">
+        <div class="col">
+            <label for="itemName" class="form-label">품목명</label>
+            <input type="text" class="form-control" id="itemName" @bind="_searchItemName">
+        </div>
+        <div class="col">
+            <label for="materialId" class="form-label">바코드</label>
+            <input type="text" class="form-control" id="materialId" @bind="_searchBarcode">
+        </div>
+        <div class="col d-flex align-items-end">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="stockIn" @bind="_searchStockIn">
+                <label for="stockIn" class="form-check-label">입고 사항</label>
+            </div>
+        </div>
+        <div class="col d-flex align-items-end">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="stockOut" @bind="_searchStockOut">
+                <label for="stockOut" class="form-check-label">출고 사항</label>
+            </div>
+        </div>
+
+    </div>
+    <div class="row mb-3">
+        <div class="col d-flex justify-content-between">
+            <button class="btn btn-primary" @onclick="Search">검색</button>
+            <div>
+                <button class="btn btn-primary" @onclick="() => ShowModal(StockTransactionType.StockIn)">입고 추가</button>
+                <button class="btn btn-secondary" @onclick="() => ShowModal(StockTransactionType.StockOut)">출고 추가</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (_stockHistorySearchResults != null && _stockHistorySearchResults.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>품목명</th>
+                <th>바코드</th>
+                <th>위치</th>
+                <th>구분</th>
+                <th>수량</th>
+                <th>일시</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var history in _stockHistorySearchResults)
+            {
+                <tr>
+                    <td>@history.ProductName</td>
+                    <td>@history.Barcode</td>
+                    <td>@history.Location</td>
+                    <td>@history.StockTransactionTypeText</td>
+                    <td>@history.Quantity</td>
+                    <td>@history.StockDateTime</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>검색 결과가 없습니다.</p>
+}
+
+@if (_showModal)
+{
+    <div class="modal" tabindex="-1" style="display:block; background-color: rgba(0,0,0,0.5);" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">@_modalTitle</h5>
+                    <button type="button" class="close" @onclick="() => _showModal = false">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <select class="form-control mb-2" @bind="_selectedStockInventoryId">
+                            @foreach (var item in _inventoryItems)
+                            {
+                                <option value="@item.Id">@item.Barcode</option>
+                            }
+                        </select>
+                        <input type="number" class="form-control mb-2" placeholder="수량" @bind="_stockInOutQuantity">
+                        <input type="date" class="form-control mb-2" @bind="_stockInOutDate">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @onclick="AddData">추가</button>
+                    <button type="button" class="btn btn-secondary" @onclick="() => _showModal = false">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string? _searchItemName;
+    private string? _searchBarcode;
+    private bool _searchStockIn;
+    private bool _searchStockOut;
+    private bool _showModal = false;
+    private string _modalTitle = "";
+    private StockTransactionType _currentModal;
+    private DateTime _stockInOutDate = DateTime.Today;
+    private int _stockInOutQuantity;
+    private int _selectedStockInventoryId;
+
+    private List<InventoryItem> _inventoryItems = null!;
+    private List<StockHistoryDTO> _stockHistorySearchResults = new List<StockHistoryDTO>();
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _inventoryItems = service.GetAllInventoryItems(); 
+
+        Search();
+    }
+
+    private void Search()
+    {
+        _stockHistorySearchResults = service.GetStockInOutsFiltered(_searchItemName, _searchBarcode, DetermineTransactionType());
+    }
+
+    private StockTransactionType? DetermineTransactionType()
+    {
+        if (_searchStockIn && !_searchStockOut)
+        {
+            return StockTransactionType.StockIn;
+        }
+        else if (!_searchStockIn && _searchStockOut)
+        {
+            return StockTransactionType.StockOut;
+        }
+
+        return null;
+    }
+
+    private void ShowModal(StockTransactionType modalType)
+    {
+        _currentModal = modalType;
+        _modalTitle = modalType == StockTransactionType.StockIn ? "입고 추가" : "출고 추가";
+        _showModal = true;
+    }
+
+    private void AddData()
+    {
+        try
+        {
+            var stockType = _currentModal;
+            var dto = new StockCommandDTO(_selectedStockInventoryId, _stockInOutQuantity, stockType);
+            service.InsertStockInOut(dto, dto.Quantity, stockType);
+
+            Search();
+        }
+        catch (Exception ex)
+        {
+            // 오류 처리 로직
+            Console.Error.WriteLine($"Error adding stock in/out data: {ex.Message}");
+        }
+        finally
+        {
+            _showModal = false;
+        }
+    }
+
+}
